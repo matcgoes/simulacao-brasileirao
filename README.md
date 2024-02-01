@@ -1,4 +1,4 @@
 ## Brasileirao Serie A
 
-### 01.EDA
+### 01.EDA 📊
 <em construção>
