@@ -93,7 +93,7 @@ O ano que mais tiveram jogos pelo Brasileirao foram os anos de 2003 e 2004 com 4
 
 - Como se comporta o publico ao longo dos anos?
 
-![Alt text](images\publico.png)
+![Alt text](/images/publico.png)
 
 Aparentemente há uma divergencia nos dados de publico para o ano de 2008, onde há uma grande quantidade de zeros.
 
@@ -103,7 +103,7 @@ Os públicos agrupados por vitorias, empates e derrotas do tima mandante tem dis
 
 - Como se comporta a média de gols por rodada ao longo do tempo?
   
-![Alt text](images\med_gols.png)
+![Alt text](/images/med_gols.png)
 
 Oberva-se que os gols ao longo das rodadas do campeonato nao seguem um padrão específico mostrando muitas vezes valores discrepantes. No entanto, nota-se que no ano de 2005 há uma maior variação nos gols marcados. 
 
@@ -111,7 +111,7 @@ Normalmente os times mandantes (linha tracejada em verde) faz mais gols, em méd
 
 ### Descritiva das variáveis numéricas:
 
-![Alt text](images\describe_num.png)
+![Alt text](/images/describe_num.png)
 
 -   Podemos observar que existe certa divergência nos dados relacionados à idade media do time titular e visitante. 
 
@@ -121,7 +121,7 @@ Normalmente os times mandantes (linha tracejada em verde) faz mais gols, em méd
 
 O problema para a idade se inicia no ano de 2023 e pode estar relacionado a algum erro de digitação (por exemplo, idade * 10). Vamos observar agora como seria a distribuição caso dividíssemos o valor por 10. Para isso, vamos olhar apenas 2022 e 2023:
 
-![Alt text](images\distrib_idade.png)
+![Alt text](/images/distrib_idade.png)
 
     idade_media_titular_man (2022) x idade_media_titular_man (2023):
 	ks: 0.05728510465352571
@@ -139,8 +139,8 @@ O problema para a idade se inicia no ano de 2023 e pode estar relacionado a algu
 - Qual estádio teve o melhor aproveitamento do time mandante?
 - Qual estádio teve o pior aproveitamento do time mandante?
 
-![Alt text](images\estadio_qtd.png)
-![Alt text](images\estadio_aproveitamento.png)
+![Alt text](/images/estadio_qtd.png)
+![Alt text](/images/estadio_aproveitamento.png)
 
 O estádio que teve mais jogos foi o Estádio Jornalista Mário Filho (Maracanã), seguido do Estádio Governador Plácido Castelo (Castelão).
 
@@ -154,8 +154,8 @@ OBS: O Estádio Jornalista Mário Filho (Maracanã) pode ter diferentes times ma
 - Qual árbitro apitou mais vitorias em % para o time mandante? 
 - Qual árbitro apitou mais derrotas em % para o time mandante? 
 
-![Alt text](images\arbitro_qtd.png)
-![Alt text](images\arbitro_aproveitamento.png)
+![Alt text](/images/arbitro_qtd.png)
+![Alt text](/images/arbitro_aproveitamento.png)
 
 Ramon Abatti, Braulio Machado, Flavio Souza, Raphael Claus e Anderson Daronco são os 5 árbitros que mais apitam jogos no Brasileirao.
 
@@ -165,20 +165,20 @@ Yuri Cruz, Denis Serafim, Paulo Henrique Volkopof e Jean Pierre Lima lideram a a
 
 - Qual torcida mais lota o estádio?
 
-![Alt text](images\publico_time.png)
+![Alt text](/images/publico_time.png)
 
 Em méda, Flamengo é o time que mais lota o estádio do time mandante, seguido por Corinthians, São Paulo, Atlético-MG, São Paulo, Palmeiras, Atlético MG e Fortaleza.
 
 - Qual equipe mais cara?
 (como os dados de 2023 estão zerados, vamos observar apenas até 2022 para essa variavel)
 
-![Alt text](images\valor_eq_time.png)
+![Alt text](/images/valor_eq_time.png)
 
 Em média, Flamengo, Palmeiras e Atlético-MG detém os elencos mais caros.
 
 - Qual a equipe mais jovem?
   
-![Alt text](images\valor_idade_time.png)
+![Alt text](/images/valor_idade_time.png)
 
 RB Bragantino, Atlético-PR, Vasco da Gama e Santos são as 3 equipes mais jovens
 
@@ -186,7 +186,7 @@ RB Bragantino, Atlético-PR, Vasco da Gama e Santos são as 3 equipes mais joven
 
 - Quais times marcaram mais gols? Quais sofreram mais gols?
   
-![Alt text](images\desemp_times.png)
+![Alt text](/images/desemp_times.png)
 
 Os times que lideram na marcação de gols são o Palmeiras, Flamengo e Botafogo.
 
@@ -194,7 +194,7 @@ Os time que mais sofreram gols são o Juventude, Coritiba, e Avaí mostrando des
 
 - Quais tecnicos tem os melhores e piores desempenhos?
 
-![Alt text](images\desemp_tecnicos.png)
+![Alt text](/images/desemp_tecnicos.png)
 
 Os técnicos que se destacam em desempenho positivo são: Cláudio Caçapa, Cauan Almeida, Mário Jorge, Marcelo Fernandes, Renato Portaluppi, Abel Ferreira e Fernando Diniz.
 
@@ -207,7 +207,7 @@ OBS: A visão do desempenho leva em consideração a relação de vitorias, empa
 
 Como os dados de valor equipe para 2023 estao impactados, vamos tirá-lo desta analise
 
-![Alt text](images\boxplot_vlr_eq_idd_eq.png)
+![Alt text](/images/boxplot_vlr_eq_idd_eq.png)
 
 Equipes mais caras tendem a trazer mais vitoria para o time, isto pois jogadores mais caros são mais habilidosos e agregam mais para o time. No entanto, a média da Idade do time titular nao diferencia no desempenho da equipe.
 
@@ -484,7 +484,7 @@ df_ = vitorias_consecutivas(df_)
         streak_sem_sofrer_gols: 0 (0.00%)
         streak_vitorias: 0 (0.00%)
 
-![Alt text](images\missings.png)
+![Alt text](/images/missings.png)
 
 Podemos observar que os valores missings estao concentrados em apenas uma porção da base de dados. Poderíamos dropá-los mas como estamos trabalhando com dados temporais, uma boa abordagem para a tratativa dos valores missings seria a interpolação. Para uma imputação mais segura, vamos olhar time a time.
 
@@ -503,7 +503,7 @@ OBS: Utilizar informação de arbitro e estadio pode trazer um certo viés ao mo
 -   Divisao em treino e teste
     -   Analise da distribuição das classes e volumetria ao longo dos anos
 
-![Alt text](images\tx_vitoria_ano.png)
+![Alt text](/images/tx_vitoria_ano.png)
 
 A taxa de vitoria se mostra relativamente estável ao longo do decorrer dos anos. Em termos de volumetria, nao temos todas as rodadas para o ano de 2023.
 
