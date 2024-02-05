@@ -57,6 +57,11 @@ Fonte dos dados: [Base dos Dados - Brasileirao Serie A](https://basedosdados.org
     - [Variaveis Janeladas](#variaveis-janeladas)
     - [Análise de Missings](#análise-de-missings)
     - [Encoding nas variáveis categóricas](#encoding-nas-variáveis-categóricas)
+  - [03. Seleção de Features e Pré-processamento dos dados ☑️](#03-seleção-de-features-e-pré-processamento-dos-dados-️)
+    - [1. Remoção de multicolinearidade entre as variáveis independentes.](#1-remoção-de-multicolinearidade-entre-as-variáveis-independentes)
+    - [2. Estatística Univariada por ANOVA (F-Score).](#2-estatística-univariada-por-anova-f-score)
+    - [3. Model Based - Seleção baseada em Random Forest.](#3-model-based---seleção-baseada-em-random-forest)
+  - [04. Treinamento do Modelo ⚙️🧠](#04-treinamento-do-modelo-️)
 
 
 ## 01. Análise Exploratória dos Dados (EDA) 📊
@@ -119,7 +124,7 @@ Normalmente os times mandantes (linha tracejada em verde) faz mais gols, em méd
 
 -    Há uma mudança de patamar no que diz respeitos aos chutes mandante e visitante.
 
-O problema para a idade se inicia no ano de 2023 e pode estar relacionado a algum erro de digitação (por exemplo, idade * 10). Vamos observar agora como seria a distribuição caso dividíssemos o valor por 10. Para isso, vamos olhar apenas 2022 e 2023:
+A inconsistência para a idade se inicia no ano de 2023 e pode estar relacionado a algum erro de digitação (por exemplo, idade * 10). Vamos observar agora como seria a distribuição caso dividíssemos o valor por 10. Para isso, vamos olhar apenas 2022 e 2023:
 
 ![Alt text](/images/distrib_idade.png)
 
@@ -135,7 +140,7 @@ O problema para a idade se inicia no ano de 2023 e pode estar relacionado a algu
 
 **As analises abaixo levam em consideração dados a partir de 2022:**
 
-- Qual estádio teve mais jogos em quantidate?
+- Qual estádio teve mais jogos em quantidade?
 - Qual estádio teve o melhor aproveitamento do time mandante?
 - Qual estádio teve o pior aproveitamento do time mandante?
 
@@ -167,7 +172,7 @@ Yuri Cruz, Denis Serafim, Paulo Henrique Volkopof e Jean Pierre Lima lideram a a
 
 ![Alt text](/images/publico_time.png)
 
-Em méda, Flamengo é o time que mais lota o estádio do time mandante, seguido por Corinthians, São Paulo, Atlético-MG, São Paulo, Palmeiras, Atlético MG e Fortaleza.
+Em méda, Flamengo é o time que mais lota o estádio do time mandante, seguido por Corinthians, São Paulo, Palmeiras, Atlético MG e Fortaleza.
 
 - Qual equipe mais cara?
 (como os dados de 2023 estão zerados, vamos observar apenas até 2022 para essa variavel)
@@ -522,4 +527,161 @@ Onde:
 - means é a média de cada grupo,
 - m é o parâmetro de suavização,
 - mean é a média global.
+
+As variáveis criadas com target encoding serão:
+
+- tecnico_man_enc e tecnico_vis_enc
+- time_man_enc e time_vis_enc
+
+## 03. Seleção de Features e Pré-processamento dos dados ☑️
+
+Tanto o pré-processamento dos dados quanto a seleção de features foram feitas sobre o conjunto de treinamento.
+
+Primeiramente, o pré-processamento foi criado através de um pipeline de transformação no qual realiza o escalonamento dos dados com a regra de MinMaxScaler e imputação de valores missings utilizando a mediana. Em seguida, inicia-se as etapas de seleção de features:
+
+### 1. Remoção de multicolinearidade entre as variáveis independentes.
+- Para esta etapa, foi realizada análise de correlação (Pearson) entre todas as variáveis.
+- Para variáveis altamente correlacionadas (limiar de 0.8), manteve-se aquela com maior correlação com a variável target.
+  
+### 2. Estatística Univariada por ANOVA (F-Score).
+- Para as variáveis restantes da primeira etapa, foi observado o F-Score bem como o P-valor, no qual foi estabelecido um threshold de p < 0.05.
+  
+![Alt text](images/anova_vars.png)
+
+    ---- Variáveis em Ordem Descrescente de Força ----
+    diff_colocacao_adv_man
+    colocacao_man
+    med_perc_chutes_com_6_man
+    med_perc_defesas_com_6_man
+    vitoria_casa_6_man
+    colocacao_vis
+    med_publico_3_man
+    med_perc_defesas_com_3_man
+    med_gols_com_6_man
+    med_perc_chutes_com_3_man
+    med_perc_gols_sof_6_vis
+    med_perc_gols_com_6_man
+    vitoria_casa_3_man
+    med_perc_chutes_com_6_vis
+    med_chutes_sof_3_man
+    med_gols_sof_3_man
+    med_perc_gols_sof_3_man
+    med_defesas_sof_6_man
+    derrota_casa_3_man
+    med_gols_sof_6_vis
+    derrota_casa_6_man
+    vitoria_fora_6_vis
+    publico_max
+    med_perc_gols_sof_3_vis
+    streak_vitorias_man
+    med_gols_sof_6_man
+    med_defesas_sof_3_man
+    streak_vitorias_vis
+    med_perc_defesas_sof_6_vis
+    med_gols_com_6_vis
+    med_defesas_com_6_man
+    diff_colocacao_3_man
+    empate_casa_6_man
+    med_gols_com_3_vis
+    diff_colocacao_6_man
+    derrota_fora_3_vis
+    med_gols_sof_3_vis
+    derrota_casa_6_vis
+    med_defesas_com_3_man
+    empate_fora_6_vis
+    med_chutes_com_3_vis
+    vitoria_fora_3_vis
+    med_perc_defesas_com_3_vis
+    med_faltas_sof_3_man
+    med_perc_impedimentos_sof_6_vis
+    derrota_casa_3_vis
+    idade_media_titular_man
+    med_chutes_bola_parada_com_6_vis
+    med_defesas_sof_6_vis
+
+### 3. Model Based - Seleção baseada em Random Forest.
+-  Foi considerado um Random Forest com 100 árvores e com profundidade 3 para cada árvore. 
+-  Ao fim, mensuramos as importâncias das variáveis e estas se concentraram nas primeiras 8 variáveis. Assim, foi realizado um corte de 0.035 na importância.
+  
+![Alt text](images/random_f_imp.png)
+
+Ao final, a seleção foi realizada considerando as features que foram selecionadas pelo método ANOVA e por Feature Importance do Random Forest (intersecção):
+
+| VAR                           | F-Score      | P-Valor            | SEL | IMP     | RF_SEL |
+|-------------------------------|--------------|--------------------|-----|---------|--------|
+| med_perc_chutes_com_6_man      | 37.781580    | 1.111924e-09       | 1   | 0.094372| 1      |
+| diff_colocacao_adv_man         | 86.280118    | 8.348423e-20       | 1   | 0.068032| 1      |
+| colocacao_man                  | 58.350752    | 4.821110e-14       | 1   | 0.056617| 1      |
+| med_perc_defesas_com_6_man     | 37.448823    | 1.311184e-09       | 1   | 0.053201| 1      |
+| colocacao_vis                  | 32.839902    | 1.297472e-08       | 1   | 0.047235| 1      |
+| med_perc_gols_sof_6_vis        | 25.246055    | 5.902928e-07       | 1   | 0.045582| 1      |
+| med_perc_defesas_com_3_man     | 25.890737    | 4.259223e-07       | 1   | 0.041163| 1      |
+| med_perc_chutes_com_6_vis      | 22.252240    | 2.704285e-06       | 1   | 0.038385| 1      |
+| med_publico_3_man              | 29.981032    | 5.425711e-08       | 1   | 0.030182| 0      |
+| med_perc_chutes_com_3_man      | 25.269577    | 5.833006e-07       | 1   | 0.027351| 0      |
+| med_chutes_sof_3_man           | 21.311805    | 4.372256e-06       | 1   | 0.025749| 0      |
+| idade_media_titular_man        | 4.200328     | 4.065752e-02       | 1   | 0.023463| 0      |
+| med_gols_sof_3_man             | 20.692781    | 6.002571e-06       | 1   | 0.021781| 0      |
+| med_gols_com_6_man             | 25.635004    | 4.847643e-07       | 1   | 0.017476| 0      |
+| med_perc_gols_com_6_man        | 24.983045    | 6.744503e-07       | 1   | 0.016671| 0      |
+| med_perc_defesas_com_3_vis     | 5.307451     | 2.142375e-02       | 1   | 0.016353| 0      |
+| publico_max                    | 14.892381    | 1.205732e-04       | 1   | 0.015581| 0      |
+| vitoria_casa_6_man             | 33.807107    | 8.009046e-09       | 1   | 0.015095| 0      |
+| med_perc_gols_sof_3_man        | 19.787425    | 9.551394e-06       | 1   | 0.014554| 0      |
+| med_publico_3_vis              | 0.974257     | 3.238421e-01       | 0   | 0.014444| 0      |
+
+Passando a ter as seguintes variáveis finais:
+
+    ['med_perc_chutes_com_6_man',
+    'diff_colocacao_adv_man',
+    'colocacao_man',
+    'med_perc_defesas_com_6_man',
+    'colocacao_vis',
+    'med_perc_gols_sof_6_vis',
+    'med_perc_defesas_com_3_man',
+    'med_perc_chutes_com_6_vis']
+
+## 04. Treinamento do Modelo ⚙️🧠
+
+Para avaliar a performance do Modelo, precisamos treiná-lo utilizando uma métrica que será o Log Loss. 
+
+Log Loss mede a distância entre as probabilidades previstas pelo modelo e as probabilidades reais e é uma métrica útil para avaliar modelos de classificação porque ela penaliza previsões incorretas.
+
+`Log Loss = -1/N * sum(y * log(p) + (1 - y) * log(1 - p))`
+
+Foram testadas várias técnicas com busca pelos melhores hiperparâmetros para cada uma delas. O treinamento ainda contou com a validação cruzada de forma temporal, separando a base de treinamento em 4 Folds iguais, na qual o primeiro fold foi utilizado para treinamento e o segundo fold para teste, e assim por diante:
+
+```python
+n_folds = 4
+
+tamanho_fold = int(len(df_train_f)/n_folds)
+
+partes = [df_train_f.iloc[i*tamanho_fold:(i+1)*tamanho_fold] for i in range(n_folds)]
+
+for i in range(n_folds):
+
+    df = df_train_f.iloc[i*tamanho_fold:(i+1)*tamanho_fold]
+    pct70 = int(len(df)*0.7)
+    df_train_aux = df.iloc[:pct70]
+    df_test_aux = df.iloc[pct70:]
+
+    print(f'TREINO: {len(df_train_aux)}, TESTE: {len(df_test_aux)}, SOMA: {len(df_train_aux) + len(df_test_aux)}')
+```
+
+    TREINO: 189, TESTE: 81, SOMA: 270
+    TREINO: 189, TESTE: 81, SOMA: 270
+    TREINO: 189, TESTE: 81, SOMA: 270
+    TREINO: 189, TESTE: 81, SOMA: 270
+
+A tunagem pela busca dos melhores hiperparâmetros foi através da biblioteca Optuna.
+
+Ao final do processo, temos a tabela comparativa para cada técnica cujos hiperparâmetros retornaram o melhor valor (minimização do Log Loss):
+
+| Modelo             | Melhores Parâmetros                                                                                                                  | Melhor Valor |
+|--------------------|----------------------------------------------------------------------------------------------------------------------------------------|--------------|
+| RandomForest       | {'n_estimators': 702, 'max_depth': 4, 'criterion': 'entropy', 'min_samples_split': 38, 'min_samples_leaf': 14, 'bootstrap': True}   | 0.5822       |
+| LogisticRegression | {'C': 1.1095052608809104, 'penalty': 'l2', 'solver': 'saga', 'max_iter': 1197}                                                    | 0.5822       |
+| LGBM               | {'n_estimators': 406, 'max_depth': 1, 'learning_rate': 0.004237334042171262, 'num_leaves': 40, 'min_data_in_leaf': 12, 'bagging_fraction': 0.5508309431945917, 'reg_alpha': 0.4509535238207118, 'reg_lambda': 0.0010016474801699444} | 0.5964       |
+| SVC                | {'C': 0.0013730010833586227, 'kernel': 'linear', 'gamma': 0.21501255938852593, 'shrinking': True, 'probability': True}         | 0.5974       |
+| DecisionTree       | {'max_depth': 1, 'min_samples_split': 10, 'max_leaf_nodes': 27, 'criterion': 'entropy'}                                           | 0.6299       |
 
