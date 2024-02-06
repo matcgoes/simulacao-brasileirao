@@ -1,0 +1,50 @@
+<html>
+<body>
+    <div class="login">
+       <h1>Student Exam Performance Indicator</h1>
+
+       <form action="{{ url_for('predict_datapoint')}}" method="post">
+        <h1>
+            <legend>Student Exam Performance Prediction</legend>
+        </h1>
+        <div class="mb-3">
+            <label class="form-label">Median Percentage of Shots with 6 Managers</label>
+            <input class="form-control" type="number" name="med_perc_chutes_com_6_man" step="0.01" placeholder="Enter median percentage of shots with 6 managers" required />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Difference in Placement with Advanced Manager</label>
+            <input class="form-control" type="number" name="diff_colocacao_adv_man" placeholder="Enter difference in placement with advanced manager" required />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Placement with Manager</label>
+            <input class="form-control" type="number" name="colocacao_man" placeholder="Enter placement with manager" required />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Median Percentage of Defenses with 6 Managers</label>
+            <input class="form-control" type="number" name="med_perc_defesas_com_6_man" step="0.01" placeholder="Enter median percentage of defenses with 6 managers" required />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Placement of Visitors</label>
+            <input class="form-control" type="number" name="colocacao_vis" placeholder="Enter placement of visitors" required />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Median Percentage of Goals Conceded with 6 Visitors</label>
+            <input class="form-control" type="number" name="med_perc_gols_sof_6_vis" step="0.01" placeholder="Enter median percentage of goals conceded with 6 visitors" required />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Median Percentage of Defenses with 3 Managers</label>
+            <input class="form-control" type="number" name="med_perc_defesas_com_3_man" step="0.01" placeholder="Enter median percentage of defenses with 3 managers" required />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Median Percentage of Shots with 6 Visitors</label>
+            <input class="form-control" type="number" name="med_perc_chutes_com_6_vis" step="0.01" placeholder="Enter median percentage of shots with 6 visitors" required />
+        </div>
+        <div class="mb-3">
+            <input class="btn btn-primary" type="submit" value="Predict your Maths Score" required />
+        </div>
+    </form>
+    <h2>
+       THE prediction is {{results}}
+    </h2>
+   <body>
+</html>
