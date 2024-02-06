@@ -1,4 +1,4 @@
-# Brasileirão Série A
+# Brasileirão Série A ⚽
 
 Este é um projeto que utiliza dados históricos (desde 2003) do Campeonato Brasileiro Serie A. Os dados disponíveis contém informações de estatísticas de partidas tanto para o time mandante quanto visitante tais como chutes, faltas, gols, impedimentos bem como informações específicas do time, como idade media do time titular, técnico, valor da equipe, etc.
 
@@ -46,7 +46,7 @@ Fonte dos dados: [Base dos Dados - Brasileirao Serie A](https://basedosdados.org
 
 
 ## Tabela de Conteúdo
-- [Brasileirão Série A](#brasileirão-série-a)
+- [Brasileirão Série A ⚽](#brasileirão-série-a-)
   - [Tabela de Conteúdo](#tabela-de-conteúdo)
   - [01. Análise Exploratória dos Dados (EDA) 📊](#01-análise-exploratória-dos-dados-eda-)
     - [Evolução temporal:](#evolução-temporal)
@@ -62,6 +62,16 @@ Fonte dos dados: [Base dos Dados - Brasileirao Serie A](https://basedosdados.org
     - [2. Estatística Univariada por ANOVA (F-Score).](#2-estatística-univariada-por-anova-f-score)
     - [3. Model Based - Seleção baseada em Random Forest.](#3-model-based---seleção-baseada-em-random-forest)
   - [04. Treinamento do Modelo ⚙️🧠](#04-treinamento-do-modelo-️)
+    - [Métrica de Otimização](#métrica-de-otimização)
+    - [Tunagem Hiperparâmetros](#tunagem-hiperparâmetros)
+  - [05. Teste de Rentabilidade em Apostas 💲](#05-teste-de-rentabilidade-em-apostas-)
+    - [Primeira Simulação:](#primeira-simulação)
+    - [Segunda Simulação:](#segunda-simulação)
+    - [Terceisa Simulação:](#terceisa-simulação)
+    - [Novas Estratégias:](#novas-estratégias)
+    - [Quarta Simulação (por Árvore):](#quarta-simulação-por-árvore)
+    - [Quinta Simulação (por Otimização):](#quinta-simulação-por-otimização)
+    - [Tabela Comparativa e Conclusão:](#tabela-comparativa-e-conclusão)
 
 
 ## 01. Análise Exploratória dos Dados (EDA) 📊
@@ -643,35 +653,47 @@ Passando a ter as seguintes variáveis finais:
 
 ## 04. Treinamento do Modelo ⚙️🧠
 
+### Métrica de Otimização
+
 Para avaliar a performance do Modelo, precisamos treiná-lo utilizando uma métrica que será o Log Loss. 
 
 Log Loss mede a distância entre as probabilidades previstas pelo modelo e as probabilidades reais e é uma métrica útil para avaliar modelos de classificação porque ela penaliza previsões incorretas.
 
 `Log Loss = -1/N * sum(y * log(p) + (1 - y) * log(1 - p))`
 
-Foram testadas várias técnicas com busca pelos melhores hiperparâmetros para cada uma delas. O treinamento ainda contou com a validação cruzada de forma temporal, separando a base de treinamento em 4 Folds iguais, na qual o primeiro fold foi utilizado para treinamento e o segundo fold para teste, e assim por diante:
+Foram testadas várias técnicas com busca pelos melhores hiperparâmetros para cada uma delas. O treinamento ainda contou com a validação cruzada de forma temporal, separando a base de treinamento em 4 Folds iguais, na qual 70% de cada fold foi utilizado para treinamento e o restante 30% para teste, e assim por diante:
 
+![Alt text](images/folds.png)
+
+A métrica otimizada então foi a média do Log Loss dos 4 Folds testados.
 ```python
 n_folds = 4
 
 tamanho_fold = int(len(df_train_f)/n_folds)
 
-partes = [df_train_f.iloc[i*tamanho_fold:(i+1)*tamanho_fold] for i in range(n_folds)]
-
+metrics_folds = []  
 for i in range(n_folds):
 
     df = df_train_f.iloc[i*tamanho_fold:(i+1)*tamanho_fold]
     pct70 = int(len(df)*0.7)
-    df_train_aux = df.iloc[:pct70]
-    df_test_aux = df.iloc[pct70:]
+    train = df.iloc[:pct70]
+    valid = df.iloc[pct70:]
+    
+    X_train = train.drop(['vitoria'],axis=1)
+    y_train = train['vitoria']
+    
+    X_valid = valid.drop(['vitoria'],axis=1)
+    y_valid = valid['vitoria']      
 
-    print(f'TREINO: {len(df_train_aux)}, TESTE: {len(df_test_aux)}, SOMA: {len(df_train_aux) + len(df_test_aux)}')
+    model.fit(X_train, y_train)        
+    y_pred_proba = model.predict_proba(X_valid)[:, 1]       
+    y_pred =  model.predict(X_valid)
+    
+    result = log_loss(y_valid, y_pred_proba)
+    metrics_folds.append(result)
 ```
 
-    TREINO: 189, TESTE: 81, SOMA: 270
-    TREINO: 189, TESTE: 81, SOMA: 270
-    TREINO: 189, TESTE: 81, SOMA: 270
-    TREINO: 189, TESTE: 81, SOMA: 270
+### Tunagem Hiperparâmetros
 
 A tunagem pela busca dos melhores hiperparâmetros foi através da biblioteca Optuna.
 
@@ -685,3 +707,192 @@ Ao final do processo, temos a tabela comparativa para cada técnica cujos hiperp
 | SVC                | {'C': 0.0013730010833586227, 'kernel': 'linear', 'gamma': 0.21501255938852593, 'shrinking': True, 'probability': True}         | 0.5974       |
 | DecisionTree       | {'max_depth': 1, 'min_samples_split': 10, 'max_leaf_nodes': 27, 'criterion': 'entropy'}                                           | 0.6299       |
 
+As técnicas que apresentaram melhores resultados foi o RandomForest e a Regressão Logísitca. Como a Regressão Logísitca é uma técnica mais simplificada (o que reduz o overfitting) e explicável, optamos por seguir com a Regressão Logísitca.
+
+Uma vez com os dados escorados, temos a seguinte distribuição do Score (Probabilidade de Vitória do time mandante) no tempo e em densidade, agrupado pelo resultado real de vitória (1), empate (0) ou derrota (-1).
+
+- Box Plot x Ano
+![Alt text](images/boxplot_score.png)
+
+- Distribuição Treino x Teste
+![Alt text](images/kde_score_treino_teste.png)
+
+
+## 05. Teste de Rentabilidade em Apostas 💲
+
+- Vamos simular apostas para os jogos no conjunto de teste, de forma a avaliar a rentabilidade.
+- As apostas serão feitas utilizando o Critério de Kelly: uma abordagem estatística que leva em consideração os Odds, a probabilidade do Modelo e o Saldo. Essa abordagem é útil para se calcular o tamanho de uma aposta.
+- Vamos utilizar frações de Kelly para essas apostas (constante K), que tem por objetivo reduzir em K o valor apostado com o intuito de realizar apostas menos arrojadas.
+- O Saldo de início será de R$ 1000,00
+  
+OBS: através das Odds, é possível calcular a probabilidade implícita.
+
+`Prob. imp = (1/Odds) `
+
+### Primeira Simulação:
+
+Apostas somente na  vitoria do time mandante:
+- O tamanho da aposta será calculado pelo Critério de Kelly, utilizando Odds da vitoria.
+- A aposta apenas será realizada se o valor da fração de kelly for positivo.
+- O valor máximo de cada aposta será de R$ 100,00.
+
+![Alt text](images/simulacao_1.png)
+
+| valor_total_apostado | %_jogos_apostados | qtd_apostas | valor_aposta_maxima | %_apostas_ganhas | valor_ganho_maximo | fracao_kelly | saldo_final | %_roi   | %_roi_medio | %_drawdown | %_ror    |
+|-----------------------|-------------------|-------------|----------------------|------------------|--------------------|--------------|-------------|---------|-------------|------------|----------|
+| 6518.38               | 96.49             | 605         | 100.0                | 45.45            | 259.00             | 1.000        | 0.00        | -100.00 | -10.98      | 100.00     | -382.70  |
+| 6435.31               | 96.49             | 605         | 100.0                | 45.45            | 259.00             | 0.500        | 0.00        | -100.00 | -10.98      | 100.00     | -358.29  |
+| 7179.17               | 96.49             | 605         | 100.0                | 45.45            | 192.00             | 0.250        | 26.74       | -97.33  | -10.98      | 99.72      | -361.64  |
+| 10106.88              | 96.49             | 605         | 100.0                | 45.45            | 163.72             | 0.125        | 349.04      | -65.10  | -10.98      | 93.17      | -289.72  |
+
+Resultados - Simulação 1:
+-   Apostar apenas na vitoria trouxe retornos negativos em todas as frações de Kelly (K).
+-   96.5% dos jogos foram apostados, sendo que 46% destes foram em apostas ganhas.
+-   Apesar dos resultados negativos, o cenário com K = 0.125 resultou no menor prejuízo (ROI de -65%).
+
+### Segunda Simulação:
+
+Apostas na vitoria ou derrota do time mandante:
+- O tamanho da aposta será calculado pelo Critério de Kelly, utilizando Odds da vitoria ou derrota do time mandante.
+- Será realizada apenas uma aposta por jogo (ou na derrota ou vitoria) e não simultaneamente.
+- A aposta será no time cujo valor de Kelly for maior (melhor recomendação de acordo com a Probabilidade e Odds).
+- O valor máximo de cada aposta será de R$ 100,00.
+
+![Alt text](images/simulacao_2.png)
+
+| valor_total_apostado | %_jogos_apostados | qtd_apostas | valor_aposta_maxima | %_apostas_ganhas | valor_ganho_maximo | fracao_kelly | saldo_final | %_roi  | %_roi_medio | %_drawdown | %_ror    |
+|-----------------------|-------------------|-------------|----------------------|------------------|--------------------|--------------|-------------|--------|-------------|------------|----------|
+| 10557.00              | 99.84             | 626         | 100.0                | 46.01            | 699.00             | 1.000        | 0.00        | -100.00| 6.96        | 100.00     | -157.15  |
+| 10721.12              | 99.84             | 626         | 100.0                | 46.01            | 699.00             | 0.500        | 1.73        | -99.83 | 6.96        | 100.00     | -157.36  |
+| 27666.92              | 99.84             | 626         | 100.0                | 46.01            | 497.17             | 0.250        | 1122.52     | 12.25 | 6.96        | 99.39      | 20.65    |
+| 25386.00              | 99.84             | 626         | 100.0                | 46.01            | 280.08             | 0.125        | 1854.09     | 85.41 | 6.96        | 94.63      | 132.31   |
+
+
+Resultados - Simulação 2:
+-   Os cenários com Kelly de 0.25 e 0.125 trouxeram retornos positivos com 12.25% e 85.41%, respectivamente.
+-   Aproximadamente 100% dos jogos foram apostados, sendo que 46% destes foram em apostas ganhas.
+
+### Terceisa Simulação:
+
+Apostas na vitoria e derrota do time mandante:
+- O tamanho da aposta será calculado pelo Critério de Kelly, utilizando Odds da vitoria e derrota do time mandante.
+- As apostas serão realizadas tanto na vitoria quanto derrota do time mandante, de forma a diversificar e reduzir o risco.
+- As apostas serão ponderadas pelo valor de Kelly e aplicada ao valor máximo da aposta para a rodadada.
+- O valor máximo de cada aposta será de R$ 100,00.
+
+![Alt text](images/simulacao_3.png)
+
+| valor_total_apostado | %_jogos_apostados | qtd_apostas | valor_aposta_maxima | %_apostas_ganhas | valor_ganho_maximo | fracao_kelly | saldo_final | %_roi  | %_roi_medio | %_drawdown | %_ror    |
+|-----------------------|-------------------|-------------|----------------------|------------------|--------------------|--------------|-------------|--------|-------------|------------|----------|
+| 8711.94               | 99.84             | 626         | 100.0                | 61.98            | 699.00             | 1.000        | 0.00        | -100.00| -0.10       | 100.00     | -210.81  |
+| 8770.46               | 99.84             | 626         | 100.0                | 61.98            | 699.00             | 0.500        | 0.17        | -99.98 | -0.15       | 100.00     | -211.10  |
+| 16718.20              | 99.84             | 626         | 100.0                | 61.98            | 480.45             | 0.250        | 333.74      | -66.63| -0.18       | 99.82      | -162.06  |
+| 21873.53              | 99.84             | 626         | 100.0                | 61.98            | 275.78             | 0.125        | 1314.28     | 31.43 | -0.21       | 95.84      | 64.13    |
+
+
+Resultados - Simulação 3:
+-   O cenário com K = 0.125 foi o único com retorno positivo (31.43%)
+-   Aproximadamente 100% dos jogos foram apostados, com uma taxa de apostas ganhar de 62%, o que é um bom indicador.
+-   O maior valor ganho nas apostas foi de R$ 699 para K = 1 e K = 0.5. No entanto, o ROI final foi negativo. 
+
+### Novas Estratégias:
+
+Em vista a buscar melhores resultados, vamos realizar uma comparação da probabilidade do Modelo com a probabilidade implicita (através dos Odds). 
+
+Além disso, vamos estabelecer novas regras baseada nesses dados para realizar novas estratégias.
+
+- Relação entre probabilidade do Modelo para vitoria do time mandante ou visitante em comparação com a probabilidade implicita dos Odds
+
+![Alt text](images/prob_impl_prob_mod.png)
+
+Ao analisar as relações entre as probabilidades, podemos concluir que:
+
+1. Vitoria Mandante:
+    -   Para time mandante, uma Prob. Modelo >= 0.8 conseguiria segmentar bem os casos de **vitoria mandante** (resultado = 1.0 da plotagem à esquerda).
+    -   Em contrapartida, para o time visitante, uma Prob. Modelo <= 0.25 e Prob. Implicita <= 0.3 separa bem os casos de **vitoria mandante** (resultado = 1.0 da plotagem à direita).
+
+2. Vitoria Visitante:
+    -   Para time mandante, uma Prob. Modelo <= 0.7 e Prob. Implicita <= 0.4 segmenta parcialmente os casos de **vitoria visitante** (resultado = -1 da plotagem à esquerda).
+    -   Para time visitante, uma Prob. Modelo > 0.4 ou Prob. Implicita > 0.4 segmentaria razoavelmente bem os casos de **vitoria visitante**. (resultado = -1, da plotagem à direita)
+
+Para encontrarmos os melhores cortes possíveis, podemos criar uma Árvore de Decisão com profundidade baixa. Para isso vamos criar mais duas variáveis que seriam a diferença entre a probabilidade do nosso modelo em relação à probabilidade implicita em odds.
+
+![Alt text](images/arvore_estrategia.png)
+
+### Quarta Simulação (por Árvore):
+
+Apostas na vitoria e derrota do time mandante:
+- Os critérios de apostas serão os mesmos da simulação 3, exceto pela proporção das apostas nas quais serão de acordo com as regras conforme a Árvore de Decisão
+
+-   Se prob derrota <= 0.3 ( ou prob vitoria > 0.7) - Node #1
+    -   então apostar  majoritariamente na vitoria (90% do valor da aposta) e 10% na derrota.
+
+-   Se prob_derrota > 0.3 e prob_impl_derrota <= 0.4 - Node #9
+    -   então não apostar (equilibrio entre classes)
+
+-   Se prob_derrota > 0.3 e prob_impl_derrota > 0.4 - Node #12
+    -   apostar na derrota (70%)
+
+![Alt text](images/simulacao_4.png)
+
+| valor_total_apostado | %_jogos_apostados | qtd_apostas | valor_aposta_maxima | %_apostas_ganhas | valor_ganho_maximo | fracao_kelly | saldo_final | %_roi  | %_roi_medio | %_drawdown | %_ror    |
+|-----------------------|-------------------|-------------|----------------------|------------------|--------------------|--------------|-------------|--------|-------------|------------|----------|
+| 5618.04               | 57.26             | 359         | 90.0                 | 72.42            | 172.8              | 1.000        | 0.01        | -100.00| -3.58       | 100.00     | -369.13  |
+| 19533.16              | 58.85             | 369         | 90.0                 | 71.00            | 225.0              | 0.500        | 924.76      | -7.52 | -4.26       | 99.00      | -19.11   |
+| 25693.83              | 59.17             | 371         | 90.0                 | 71.16            | 225.0              | 0.250        | 2111.29     | 111.13| -3.89       | 89.81      | 161.72   |
+| 21947.91              | 57.58             | 361         | 90.0                 | 72.30            | 225.0              | 0.125        | 2288.35     | 128.83| -3.41       | 80.95      | 195.48   |
+
+Resultados - Simulação com Árvore:
+-   O cenário com K = 0.125 teve o melhor retorno (128.83 %). O cenário com K = 0.5 também trouxe resultado positivo (111 %)
+-   K = 0.5 praticamente ficou no zero a zero, com -4.26% de ROI.
+-   Aproximadamente 60% dos jogos foram apostados, com uma taxa de apostas ganhas de ~70%, obtendo resultados melhores.
+-   O cenário com K = 1 foi o pior, resultando em -100% em ROI.
+
+### Quinta Simulação (por Otimização):
+
+Vamos buscar os melhores thersholds para a Probabilidade do Modelo, Diferença entre Probabilidade Modelo e Probabilidade Implicita por Odds, Valor maximo da aposta e Valor de Kelly de forma a otimizar nossos ganhos e implementar uma possível estratégia de apostas, caso os resultados sejam promissores.
+
+Aqui, através da utilização do Optuna, vamos maximizar a métrica de ROR (Retorno sobre Risco) na qual é calculada pela relação entre o Lucro Liquido e o Desvio padrão do bankroll.
+
+`ROR = (Saldo Final - Saldo Inicial) / Desv. Padrão Bankroll`
+
+    Melhores Parâmetros: {'k': 0.7561025619717784, 'max_vlr_aposta': 226, 'probw_th': 0.8686561004076437, 'probl_th': 0.34896891790529694, 'diff_probw_th': 0.17279920094615078, 'diff_probl_th': 0.427971692833322}
+
+    Melhor Valor: 4.171390755265336
+
+![Alt text](images/simulacao_5.png)
+
+| valor_total_apostado | %_jogos_apostados | qtd_apostas | valor_aposta_maxima | %_apostas_ganhas | valor_ganho_maximo | fracao_kelly | saldo_final | %_roi  | %_roi_medio | %_drawdown | %_ror    |
+|-----------------------|-------------------|-------------|----------------------|------------------|--------------------|--------------|-------------|--------|-------------|------------|----------|
+| 15650.98              | 11.16             | 70          | 230.0                | 65.71            | 575.00             | 1.000        | 3828.94     | 282.89 | 20.49       | 97.28      | 237.73   |
+| 14523.16              | 11.16             | 70          | 230.0                | 65.71            | 575.00             | 0.500        | 3584.34     | 258.43 | 20.49       | 93.40      | 239.49   |
+| 12136.28              | 11.16             | 70          | 230.0                | 65.71            | 575.00             | 0.250        | 3556.35     | 255.64 | 20.49       | 87.47      | 253.03   |
+| 8023.54               | 11.16             | 70          | 230.0                | 65.71            | 368.24             | 0.125        | 2846.79     | 184.68 | 20.49       | 75.85      | 278.05   |
+| 15573.55              | 11.16             | 70          | 230.0                | 65.71            | 575.00             | 0.750        | 3935.74     | 293.57 | 20.49       | 95.66      | 243.87   |
+
+
+Resultados após otimização:
+-   Todos os cenários obtiveram retorno positivo, sendo o maior deles com o K otimizado de 0.75 (ROI de 293%)
+-   Nota-se ainda que o retorno foi positivo com apenas 11% dos jogos apostados, sendo que destes ~66% foram em apostas ganhas.
+
+### Tabela Comparativa e Conclusão:
+
+| Simulação | Vlr. Total Apostado | % Jogos Apostados | Qtd. Apostas | Vlr. Aposta Max. | % Apostas Ganhas | Vlr. Ganho Max | K     | Sld. Final | % ROI  | % ROI Med. | % Drawdown | % ROR   |
+|-----------|---------------------|-------------------|--------------|------------------|------------------|----------------|-------|------------|--------|------------|------------|---------|
+| 1         | 10106.88            | 96.49             | 605          | 100.0            | 45.45            | 163.72         | 0.125 | 349.04     | -65.10 | -10.98     | 93.17      | -289.72 |
+| 2         | 25386.00            | 99.84             | 626          | 100.0            | 46.01            | 280.08         | 0.125 | 1854.09   | 85.41  | 6.96      | 94.63      | 132.31 |
+| 3         | 21873.53            | 99.84             | 626          | 100.0            | 61.98            | 275.78         | 0.125 | 1314.28   | 31.43  | -0.21     | 95.84      | 64.13 |
+| 4 (Árvore)         | 21947.91            | 57.58             | 361          | 90.0             | 72.30            | 225.0          | 0.125 | 2288.35   | 128.83 | -3.41     | 80.95      | 195.48 |
+| 5 (Otimização)        | 15573.55            | 11.16             | 70           | 230.0            | 65.71            | 575.00         | 0.750 | 3935.74   | 293.57 | 20.49     | 95.66      | <font color="green">**243.87**</font> |
+
+Com base nos resultados apresentados, podemos concluir que a estratégia 5 (Otimização) foi a que obteve os melhores resultados. Essa estratégia teve o maior saldo final, o maior % ROI e o maior % ROR, que foi a metrica otimizada
+
+As estratégias 2,3 e 4 também obtiveram resultados positivos, com um % ROI de 85,41%, 31,43% e 128,83%, respectivamente. No entanto, o valor total apostado são superiores (~ R$ 20k) em relação à estratégia 5. Isso indica que essas estratégias estão suscetíveis a maiores perdas, aumentando o seu risco.
+
+A  estratégia 1 teve o pior resultado, com um % ROI de -65,10%.
+
+Portanto, recomenda-se o uso da estratégia 5 (Otimização) para apostas futuras! 🚀
+
+Ainda assim, é **importante ressaltar** que qualquer estratégia está sujeita a erros e que atividades de apostas podem trazer perdas financeiras.
+
+...
