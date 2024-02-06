@@ -64,7 +64,7 @@ Fonte dos dados: [Base dos Dados - Brasileirao Serie A](https://basedosdados.org
   - [04. Treinamento do Modelo ⚙️🧠](#04-treinamento-do-modelo-️)
     - [Métrica de Otimização](#métrica-de-otimização)
     - [Tunagem Hiperparâmetros](#tunagem-hiperparâmetros)
-  - [05. Teste de Rentabilidade em Apostas �](#05-teste-de-rentabilidade-em-apostas-)
+  - [05. Teste de Rentabilidade em Apostas 💰](#05-teste-de-rentabilidade-em-apostas-)
     - [Primeira Simulação:](#primeira-simulação)
     - [Segunda Simulação:](#segunda-simulação)
     - [Terceisa Simulação:](#terceisa-simulação)
