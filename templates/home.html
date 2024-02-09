@@ -1,50 +1,106 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculo Modelo</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-image: url('../static/background-image.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            position: relative;
+        }
+        .login {
+            width: 400px;
+            margin: 100px 0 0 100px; /* Posicionamento do formulário */
+            background: rgba(255, 255, 255, 0.8); /* Fundo opaco para o formulário */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .login h1, .login h2 {
+            text-align: center;
+        }
+        .form-label {
+            font-weight: bold;
+        }
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        .btn-primary {
+            background-color: #2b2c2e;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            width: 100%;
+        }
+        .btn-primary:hover {
+            background-color: #239419;
+        }
+    </style>
+</head>
 <body>
+    <div class="overlay"></div> <!-- Adiciona uma camada de overlay semi-transparente -->
     <div class="login">
-       <h1>Student Exam Performance Indicator</h1>
-
-       <form action="{{ url_for('predict_datapoint')}}" method="post">
-        <h1>
-            <legend>Student Exam Performance Prediction</legend>
-        </h1>
-        <div class="mb-3">
-            <label class="form-label">Median Percentage of Shots with 6 Managers</label>
-            <input class="form-control" type="number" name="med_perc_chutes_com_6_man" step="0.01" placeholder="Enter median percentage of shots with 6 managers" required />
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Difference in Placement with Advanced Manager</label>
-            <input class="form-control" type="number" name="diff_colocacao_adv_man" placeholder="Enter difference in placement with advanced manager" required />
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Placement with Manager</label>
-            <input class="form-control" type="number" name="colocacao_man" placeholder="Enter placement with manager" required />
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Median Percentage of Defenses with 6 Managers</label>
-            <input class="form-control" type="number" name="med_perc_defesas_com_6_man" step="0.01" placeholder="Enter median percentage of defenses with 6 managers" required />
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Placement of Visitors</label>
-            <input class="form-control" type="number" name="colocacao_vis" placeholder="Enter placement of visitors" required />
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Median Percentage of Goals Conceded with 6 Visitors</label>
-            <input class="form-control" type="number" name="med_perc_gols_sof_6_vis" step="0.01" placeholder="Enter median percentage of goals conceded with 6 visitors" required />
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Median Percentage of Defenses with 3 Managers</label>
-            <input class="form-control" type="number" name="med_perc_defesas_com_3_man" step="0.01" placeholder="Enter median percentage of defenses with 3 managers" required />
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Median Percentage of Shots with 6 Visitors</label>
-            <input class="form-control" type="number" name="med_perc_chutes_com_6_vis" step="0.01" placeholder="Enter median percentage of shots with 6 visitors" required />
-        </div>
-        <div class="mb-3">
-            <input class="btn btn-primary" type="submit" value="Predict your Maths Score" required />
-        </div>
-    </form>
-    <h2>
-       THE prediction is {{results}}
-    </h2>
-   <body>
+        <form action="{{ url_for('predict_datapoint')}}" method="post">
+            <h1>
+                <legend>Cálculo Probabilidade Vitória do Time Mandante</legend>
+            </h1>
+            <div class="mb-3">
+                <label class="form-label">Percentual Médio de Chutes Time Mandante (últimos 6 jogos)</label>
+                <input class="form-control" type="number" name="med_perc_chutes_com_6_man" step="0.01" placeholder="Enter median percentage of shots with 6 managers" required />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Diferença entre Colocações Mandante e Visitante</label>
+                <input class="form-control" type="number" name="diff_colocacao_adv_man" placeholder="Enter difference in placement with advanced manager" required />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Colocação Time Mandante</label>
+                <input class="form-control" type="number" name="colocacao_man" placeholder="Enter placement with manager" required />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Percentual Médio de Defesas Time Mandante (últimos 6 jogos)</label>
+                <input class="form-control" type="number" name="med_perc_defesas_com_6_man" step="0.01" placeholder="Enter median percentage of defenses with 6 managers" required />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Colocação Time Visitante</label>
+                <input class="form-control" type="number" name="colocacao_vis" placeholder="Enter placement of visitors" required />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Percentual Médio de Gols Sofridos Time Mandante (últimos 6 jogos)</label>
+                <input class="form-control" type="number" name="med_perc_gols_sof_6_vis" step="0.01" placeholder="Enter median percentage of goals conceded with 6 visitors" required />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Percentual Médio de Defesas Time Mandante (últimos 3 jogos) </label>
+                <input class="form-control" type="number" name="med_perc_defesas_com_3_man" step="0.01" placeholder="Enter median percentage of defenses with 3 managers" required />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Percentual Médio de Chutes Time Visitante (últimos 6 jogos)</label>
+                <input class="form-control" type="number" name="med_perc_chutes_com_6_vis" step="0.01" placeholder="Enter median percentage of shots with 6 visitors" required />
+            </div>
+            <div class="mb-3">
+                <button class="btn-primary" type="submit">Palpite!</button>
+            </div>
+        </form>
+    </div>
+    <div class="result" style="margin-left: 100px;"> <!-- Div para mostrar o resultado -->
+        <h2>
+            A probabilidade é: {{results}}%
+        </h2>
+    </div>
+</body>
 </html>
