@@ -58,7 +58,7 @@
     <div class="login">
         <form action="{{ url_for('predict_datapoint')}}" method="post">
             <h1>
-                <legend>Cálculo Probabilidade Vitória do Time Mandante</legend>
+                <legend>Cálculo Modelo e Valor Aposta</legend>
             </h1>
             <div class="mb-3">
                 <label class="form-label">Percentual Médio de Chutes Time Mandante (últimos 6 jogos)</label>
@@ -93,13 +93,25 @@
                 <input class="form-control" type="number" name="med_perc_chutes_com_6_vis" step="0.01" placeholder="Enter median percentage of shots with 6 visitors" required />
             </div>
             <div class="mb-3">
+                <label class="form-label">Odds Vitoria Mandante</label>
+                <input class="form-control" type="number" name="odds_w" step="0.01" placeholder="Odds Mandante" required />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Odds Vitoria Visitante</label>
+                <input class="form-control" type="number" name="odds_l" step="0.01" placeholder="Odds Visitante" required />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Saldo</label>
+                <input class="form-control" type="number" name="bankroll" placeholder="Seu Saldo" required />
+            </div>
+            <div class="mb-3">
                 <button class="btn-primary" type="submit">Palpite!</button>
             </div>
         </form>
     </div>
     <div class="result" style="margin-left: 100px;"> <!-- Div para mostrar o resultado -->
         <h2>
-            A probabilidade é: {{results}}%
+            A probabilidade é: {{prob_w}}%
         </h2>
     </div>
 </body>

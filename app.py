@@ -28,16 +28,23 @@ def predict_datapoint():
             colocacao_vis=float(request.form.get('colocacao_vis')),
             med_perc_gols_sof_6_vis=float(request.form.get('med_perc_gols_sof_6_vis')),
             med_perc_defesas_com_3_man=float(request.form.get('med_perc_defesas_com_3_man')),
-            med_perc_chutes_com_6_vis=float(request.form.get('med_perc_chutes_com_6_vis'))
+            med_perc_chutes_com_6_vis=float(request.form.get('med_perc_chutes_com_6_vis')),
+            odds_w=float(request.form.get('odds_w')),
+            odds_l=float(request.form.get('odds_l')),
+            bankroll=float(request.form.get('bankroll'))
         )
 
         pred_df = data.get_data_as_frame()
         print(pred_df.values)
 
         predict_pipeline=PredictPipeline()
-        results = predict_pipeline.predict(pred_df)
+        prob_w, bet_w, bet_l = predict_pipeline.predict(pred_df)     
 
-        return render_template('home.html', results=round(results[0],2)*100)
+        print(f'Probabilidade Modelo {prob_w}')
+        print(f'Aposta Vitoria {bet_w}')   
+        print(f'Aposta Derrota {bet_l}')
+
+        return render_template('home.html', prob_w=round(prob_w,2)*100)
 
 
 if __name__ == '__main__':
