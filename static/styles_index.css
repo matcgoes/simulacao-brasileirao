@@ -1,4 +1,4 @@
-/* styles.css */
+/* styles_index.css */
 
 body {
     font-family: Arial, sans-serif;
@@ -36,30 +36,3 @@ button {
 button:hover {
     background-color: #239419;
 }
-
-
-
-/* Estilos para a página home.html */
-
-/*
-.home h1 {
-    color: blue;
-}
-
-.home p {
-    font-size: 16px;
-}
-*/
-
-/* Estilos para a página index.html */
-
-/*
-.index h1 {
-    color: red;
-}
-
-.index p {
-    font-size: 14px;
-}
-
-*/

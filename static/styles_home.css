@@ -1,0 +1,118 @@
+/* styles_home.css */
+body {
+    font-family: Arial, sans-serif;
+    background-image: url('../static/background-image.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    padding: 20px;
+}
+
+.container {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #2b2c2e;
+    font-family: Arial, sans-serif;
+    text-decoration: underline;
+    text-underline-position: under;
+    font-size: 36px;
+}
+
+form {
+    margin-bottom: 30px;
+}
+
+label {
+    font-weight: bold;
+}
+
+.form-control {
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+}
+
+.btn-primary {
+    background-color: #2b2c2e;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    width: 100%;
+}
+
+.btn-primary:hover {
+    background-color: #239419;
+}
+
+.result {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.result h2 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #2b2c2e;
+    margin-top: 0;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #000000;
+    padding-bottom: 5px;
+}
+
+.result p {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.result .row {
+    margin-bottom: 10px;
+}
+
+.result .col {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.result .col:first-child {
+    flex: 0 0 45%;
+}
+
+.result .col:last-child {
+    flex: 0 0 50%;
+    text-align: right;
+}
+
+.result .col p {
+    margin: 0;
+    color: #2b2c2e;
+}
+
+.result-text {
+    font-size: 1.25rem; /* 1.25rem is equivalent to 20px */
+}
+
+.title {
+    font-family: Arial, sans-serif;
+    font-size: 36px;
+    text-align: center;
+    text-decoration: underline;
+    text-decoration-color: black;
+    margin-bottom: 20px;
+}
