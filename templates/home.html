@@ -185,9 +185,9 @@
         </form>
       
         {% if show_results %}
-        <div class="result mt-3 p-3 border border-2 border-primary">
+        <div id="resultBox" class="result mt-3 p-3 border border-2 border-primary">
             <h2 class="text-primary" style="border-bottom: 2px solid #000000; padding-bottom: 5px; font-size: 1.5rem;">Resultado do Palpite</h2>
-            <p class="result-text fw-bold">A probabilidade é: {{ prob_w }}%</p>
+            <p class="result-text fw-bold">Probabilidade Vitória Mandante: {{ prob_w }}%</p>
             {% if bet_w > 0 %}
                 <p class="result-text fw-bold" style="color: green;">Aposta na Vitória: R${{ bet_w }}</p>
             {% else %}
@@ -204,5 +204,10 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.4.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        window.onload = function() {
+            document.getElementById('resultBox').scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
 </body>
 </html>

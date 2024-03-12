@@ -47,8 +47,8 @@ def predict_datapoint():
        
         return render_template('home.html', 
                                prob_w=round(prob_w*100,2),
-                               bet_w=bet_w,
-                               bet_l=bet_l,
+                               bet_w=round(bet_w,2),
+                               bet_l=round(bet_l,2),
                                show_results=True) # Flag para mostrar o modal
 
 
