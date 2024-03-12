@@ -42,7 +42,7 @@ class PredictPipeline:
 class CustomData:
     def __init__(self,
                  med_perc_chutes_com_6_man: float,
-                 diff_colocacao_adv_man: float,
+                #  diff_colocacao_adv_man: float,
                  colocacao_man: float,
                  med_perc_defesas_com_6_man: float,
                  colocacao_vis: float,
@@ -54,7 +54,7 @@ class CustomData:
                  bankroll: float):
         
         self.med_perc_chutes_com_6_man = med_perc_chutes_com_6_man
-        self.diff_colocacao_adv_man = diff_colocacao_adv_man
+        self.diff_colocacao_adv_man = colocacao_man - colocacao_vis
         self.colocacao_man = colocacao_man
         self.med_perc_defesas_com_6_man = med_perc_defesas_com_6_man
         self.colocacao_vis = colocacao_vis

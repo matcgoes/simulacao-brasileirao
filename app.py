@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, session
 import numpy as np
 import pandas as pd
 
@@ -22,7 +22,7 @@ def predict_datapoint():
     else:
         data = CustomData(
             med_perc_chutes_com_6_man=float(request.form.get('med_perc_chutes_com_6_man')),
-            diff_colocacao_adv_man=float(request.form.get('diff_colocacao_adv_man')),
+            # diff_colocacao_adv_man=float(request.form.get('diff_colocacao_adv_man')),
             colocacao_man=float(request.form.get('colocacao_man')),
             med_perc_defesas_com_6_man=float(request.form.get('med_perc_defesas_com_6_man')),
             colocacao_vis=float(request.form.get('colocacao_vis')),
@@ -44,7 +44,12 @@ def predict_datapoint():
         print(f'Aposta Vitoria {bet_w}')   
         print(f'Aposta Derrota {bet_l}')
 
-        return render_template('home.html', prob_w=round(prob_w,2)*100)
+       
+        return render_template('home.html', 
+                               prob_w=round(prob_w*100,2),
+                               bet_w=bet_w,
+                               bet_l=bet_l,
+                               show_results=True) # Flag para mostrar o modal
 
 
 if __name__ == '__main__':
