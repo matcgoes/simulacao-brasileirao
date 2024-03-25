@@ -11,4 +11,5 @@ RUN pip install -r requirements.txt
 # RUN pip uninstall -y transformers accelerate
 # RUN pip install transformers accelerate
 
+
 CMD ["python3", "app.py"]
