@@ -21,8 +21,8 @@ class PredictPipeline:
                 'med_perc_defesas_com_3_man',
                 'med_perc_chutes_com_6_vis'
             ]
-            model_path = 'artifacts\model_f.pkl'
-            preprocessor_path = 'artifacts\preprocessor.pkl'
+            model_path = 'artifacts/model_f.pkl'
+            preprocessor_path = 'artifacts/preprocessor.pkl'
             model=load_object(file_path=model_path)
             preprocessor=load_object(file_path=preprocessor_path)
             data_scaled=preprocessor.transform(features[vars_final])
