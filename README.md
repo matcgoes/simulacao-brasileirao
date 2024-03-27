@@ -48,7 +48,6 @@ Fonte dos dados: [Base dos Dados - Brasileirao Serie A](https://basedosdados.org
 ## Tabela de Conteúdo
 - [Brasileirão Série A ⚽](#brasileirão-série-a-)
   - [Tabela de Conteúdo](#tabela-de-conteúdo)
-  - [01. Análise Exploratória dos Dados (EDA) 📊](#01-análise-exploratória-dos-dados-eda-)
     - [Evolução temporal:](#evolução-temporal)
     - [Descritiva das variáveis numéricas:](#descritiva-das-variáveis-numéricas)
     - [Análise de Desempenho:](#análise-de-desempenho)
@@ -72,9 +71,7 @@ Fonte dos dados: [Base dos Dados - Brasileirao Serie A](https://basedosdados.org
     - [Quarta Simulação (por Árvore):](#quarta-simulação-por-árvore)
     - [Quinta Simulação (por Otimização):](#quinta-simulação-por-otimização)
     - [Tabela Comparativa e Conclusão:](#tabela-comparativa-e-conclusão)
-
-
-## 01. Análise Exploratória dos Dados (EDA) 📊
+  - [06. Deploy na AWS utilizando CI/CD com Github Actions ☁️](#06-deploy-na-aws-utilizando-cicd-com-github-actions-️)
 
 ### Evolução temporal:
 
@@ -895,4 +892,78 @@ Portanto, recomenda-se o uso da estratégia 5 (Otimização) para apostas futura
 
 Ainda assim, é **importante ressaltar** que qualquer estratégia está sujeita a erros e que atividades de apostas podem trazer perdas financeiras.
 
-...
+## 06. Deploy na AWS utilizando CI/CD com Github Actions ☁️
+
+No deploy será utilizado uma esteira CI/CD automatizada com Github Actions de modo a construir uma imagem Docker da aplicação para assim ser armazenada no repositório ECR da AWS. Essa imagem armazenada no ECR, portanto, é utilizada pela máquina EC2 para executar a aplicação. Segue as etapas do deploy:
+
+- Push no Github: ao realizar um push no repositório Github, o Github Actions é acionado e inicia o workflow de deploy.
+
+- Construção da Imagem Docker: o Github Actions utiliza o Docker para construir a imagem da aplicação a partir do Dockerfile. A imagem é então armazenada no repositório ECR da AWS.
+
+- Push da Imagem para o ECR: a imagem Docker é enviada para o ECR (Amazon Elastic Container Registry), um repositório de imagens seguro e gerenciado pela AWS.
+
+- Deploy da Imagem para o EC2: o Github Actions utiliza o AWS CLI para executar um script que faz o deploy da imagem Docker para uma instância EC2 (Amazon Elastic Compute Cloud) na AWS.
+
+- Execução da Aplicação: a aplicação é então iniciada na instância EC2 e fica disponível para uso.
+
+Para mais detalhes, checar os arquivos Dockerfile e main.yml.
+
+Agora segue o passo a passo prático para realizar o deploy:
+
+1. Login na AWS
+2. Crie um usuário IAM para deploy
+   ```
+    Anexar Políticas:
+    - AmazonEC2ContainerRegistryFullAccess
+    - AmazonEC2FullAccess
+    ```
+3. Criar repositório ECR para armazenar/salvar imagem Docker
+   ```
+   Salve o URI: 029785192756.dkr.ecr.sa-east-1.amazonaws.com/brasileirao-repo
+   ```
+4. Crie uma instância EC2 imagem Ubuntu
+5. Conecte à instância EC2 e instale o Docker (executar um por um)
+   ```bash
+   sudo apt-get update -y
+   sudo apt-get upgrade
+
+   curl -fsSL https://get.docker.com -o get-docker.sh
+   sudo sh get-docker.sh
+   sudo usermod -aG docker ubuntu
+   newgrp docker
+   ```
+6. Configure a EC2 como self-hosted runner
+   ```
+   No Github vá em:
+   Settings > Actions > Runners > New self-hosted runner > Linux
+   
+   execute os comandos especificados e dê um nome ao runner.
+
+   Após, execute ./run.sh para testar a conexão com o Github
+   ```
+7. Configure Github Secrets
+   ```
+   No Github vá em:
+   Settings > Secrets and variables > Actions > New repository secrets
+
+   AWS_ACCESS_KEY_ID= <sua key id>
+   AWS_SECRET_ACCESS_KEY= <sua access key>
+   AWS_REGION = sa-east-1
+   AWS_ECR_LOGIN_URI = 029785192756.dkr.ecr.sa-east-1.amazonaws.com
+   ECR_REPOSITORY_NAME = brasileirao-repo
+   ```
+   **OBS: Não compartilhe suas Secrets!!!**
+
+8. Adicione nova Porta
+   ```
+   EC2 > Segurança > Grupos Segurança > Editar regras de entrada > Adicionar regra > Adicione a porta desejada.
+   ```
+
+Actions:
+![Alt text](images/Actions.png)
+
+Página Inicial:
+![Alt text](images/index.png)
+
+Predict Exemplo:
+![Alt text](images/predict_page.png)
