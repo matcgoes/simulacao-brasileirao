@@ -968,6 +968,6 @@ Página Inicial:
 Predict Exemplo:
 ![Alt text](images/predict_page.png)
 
-Obrigado por chegar até aqui! 😄
+Obrigado por chegar até aqui!! 😄
 
 Matheus Góes.
